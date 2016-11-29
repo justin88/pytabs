@@ -1,0 +1,13 @@
+Icons from:
+
+https://www.iconfinder.com/icons/1564505/close_delete_exit_remove_icon#size=128
+
+back -- 1480331787_back-alt.png
+refresh -- 1480331800_refresh.png
+menu -- 1480331777_menu-alt.png
+go -- 1480331815_play.png
+home -- 1480331807_home.png
+preferences -- 1480331953_icons_settings.png
+exit -- 1480331964_icons_exit
+add -- 1480331795_add
+forward -- back (flipped <->)
