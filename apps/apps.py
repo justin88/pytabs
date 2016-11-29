@@ -5,7 +5,7 @@ appsDict = { }
 class AbstractApp():
 
     def __init__(self, name:str):
-        self.name = name
+        self.name = name.lower() # enforce lowercase
 
 
     # abstract method that should be overridden in implementing subclasses
@@ -18,7 +18,7 @@ def registerApp(app:AbstractApp):
     appsDict[app.name] = app
 
 
-def getErrorTabContentForUrl(url:str):
+def getErrorTabContentForUrl(url:str, app:str):
     from pytabs.tabs import AbstractTabContent
 
     class ErrorTabContent(AbstractTabContent):
@@ -31,7 +31,7 @@ def getErrorTabContentForUrl(url:str):
             from PyQt5.QtWidgets import QLabel
             from PyQt5.QtCore import Qt
             from PyQt5.QtGui import QColor
-            label = QLabel('Unknown app while parsing url: {}'.format(self.url))
+            label = QLabel('Unknown app {} while parsing url: {}'.format(app, self.url))
             label.setAlignment(Qt.AlignCenter)
             palette = label.palette()
             palette.setColor(label.backgroundRole(), QColor(255, 192, 192))

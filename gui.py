@@ -2,7 +2,7 @@ import sys
 
 from PyQt5.QtGui import QIcon
 
-from pytabs.tabs import *
+from tabs import *
 
 class GuiMainWindow(QMainWindow):
 
@@ -27,6 +27,10 @@ class GuiMainWindow(QMainWindow):
 
 
     def initUI(self):
+        import config
+        self.setWindowTitle(config.APPLICATION_NAME)
+        self.setWindowIcon(QIcon(config.APPLICATION_ICON_PATH))
+
         # create menu
         bar = self.menuBar()
         fileMenu = bar.addMenu('&File')
@@ -58,9 +62,11 @@ class GuiMainWindow(QMainWindow):
         self.tabWidget.setPalette(palette)
 
         # initialize apps
-        from pytabs.apps import apps
-        from pytabs.apps.homeApp import HomeApp
-        apps.registerApp(HomeApp.HomeApp())
+        import apps
+        from apps.homeApp import HomeApp
+        apps.apps.registerApp(HomeApp())
+        from apps.consoleApp import ConsoleApp
+        apps.apps.registerApp(ConsoleApp())
         # import and register custom apps here
         # apps.registerApp(MyApp())
 
@@ -77,7 +83,7 @@ def launch():
     app = QApplication(sys.argv)
 
     guiMainWindow = GuiMainWindow()
-    from pytabs import standards
+    import standards
     standards.centerWidgetOnScreen(guiMainWindow)
     guiMainWindow.show()
 

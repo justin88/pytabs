@@ -1,9 +1,10 @@
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import *
 
-from pytabs.urls import *
-import pytabs.config as config
+from urls import *
+import config
 
 HOME_URL = config.URL_SCHEME_WITH_SEPARATOR + 'home'
 DEFAULT_URL_FOR_NEW_TAB = HOME_URL
@@ -54,13 +55,15 @@ class TabPage(QWidget):
         self.historyForwardStack = []
 
         # widgets for navigation bar
-        from pytabs import standards
-        self.backButton = standards.fixButtonColor(QPushButton('Back'))
-        self.forwardButton = standards.fixButtonColor(QPushButton('Forward'))
-        self.homeButton = standards.fixButtonColor(QPushButton('Home'))
-        self.refreshButton = standards.fixButtonColor(QPushButton('Refresh'))
+        import standards
+        self.backButton = standards.fixButtonColor(QPushButton(QIcon('resources/back.png'), ''))
+        self.forwardButton = standards.fixButtonColor(QPushButton(QIcon('resources/forward.png'), ''))
+        self.homeButton = standards.fixButtonColor(QPushButton(QIcon('resources/home.png'), ''))
+        self.refreshButton = standards.fixButtonColor(QPushButton(QIcon('resources/refresh.png'), ''))
         self.urlLineEdit = QLineEdit()
-        self.goButton = standards.fixButtonColor(QPushButton('Go'))
+        self.goButton = standards.fixButtonColor(QPushButton(QIcon('resources/go.png'), ''))
+        self.preferencesButton = standards.fixButtonColor(QPushButton(QIcon('resources/preferences.png'), ''))
+        self.menuButton = QPushButton(QIcon('resources/menu.png'), '')
         # TODO: put menu button here; remove menu bar
         # TODO: icons instead of text; (make preference?)
 
@@ -104,6 +107,14 @@ class TabPage(QWidget):
         self.navigate(url)
 
 
+    def preferences(self):
+        print('tabs: preferences')
+
+
+    def menu(self):
+        print('tabs: menu')
+
+
     def navigate(self, url:str):
         progressBar = QProgressBar()
         progressBar.setRange(0.0, 0.0) # indeterminate progress bar
@@ -115,7 +126,7 @@ class TabPage(QWidget):
         self.backButton.setEnabled(len(self.historyBackStack) > 0)
         self.forwardButton.setEnabled(len(self.historyForwardStack) > 0)
 
-        from pytabs import urls
+        import urls
         self.tabContent = urls.getTabContentForUrl(url)
         self.workerThread = TabWorkerQThread(self.tabContent)
         self.workerThread.connector.connect(self.onBackgroundProcessingCompleted)
@@ -152,6 +163,8 @@ class TabPage(QWidget):
         # self.urlLineEdit.setFont() # TODO: set fixed width font
         self.urlLineEdit.returnPressed.connect(self.go)
         self.goButton.clicked.connect(self.go)
+        self.preferencesButton.clicked.connect(self.preferences)
+        self.menuButton.clicked.connect(self.menu)
 
         # layout widgets
         self.hbox.addWidget(self.backButton)
@@ -160,6 +173,8 @@ class TabPage(QWidget):
         self.hbox.addWidget(self.refreshButton)
         self.hbox.addWidget(self.urlLineEdit, stretch=1)
         self.hbox.addWidget(self.goButton)
+        self.hbox.addWidget(self.preferencesButton)
+        self.hbox.addWidget(self.menuButton)
         self.vbox.addLayout(self.hbox)
         self.vbox.addWidget(self.contentWidget, stretch=1)
         self.setLayout(self.vbox)
