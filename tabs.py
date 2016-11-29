@@ -3,7 +3,6 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import *
 
-from urls import *
 import config
 
 HOME_URL = config.URL_SCHEME_WITH_SEPARATOR + 'home'
@@ -63,8 +62,21 @@ class TabPage(QWidget):
         self.urlLineEdit = QLineEdit()
         self.goButton = standards.fixButtonColor(QPushButton(QIcon('resources/go.png'), ''))
         self.preferencesButton = standards.fixButtonColor(QPushButton(QIcon('resources/preferences.png'), ''))
+        # menu button
         self.menuButton = QPushButton(QIcon('resources/menu.png'), '')
-        # TODO: put menu button here; remove menu bar
+        self.contextMenu = QMenu()
+        self.addTabAction = QAction(QIcon('resources/add.png'), 'Add New &Tab', self)
+        self.addTabAction.setShortcut('Ctrl+T')
+        self.addTabAction.triggered.connect(self.addTab)
+        self.contextMenu.addAction(self.addTabAction)
+        self.closeTabAction = QAction(QIcon('resources/exit.png'), '&Close Tab', self)
+        self.closeTabAction.setShortcut('Ctrl+W')
+        self.closeTabAction.triggered.connect(self.closeTab)
+        self.contextMenu.addAction(self.closeTabAction)
+        self.contextMenu.addSeparator()
+        self.appsMenu = QMenu('Apps') # TODO: add apps...
+        self.contextMenu.addMenu(self.appsMenu)
+        self.menuButton.setMenu(self.contextMenu)
         # TODO: icons instead of text; (make preference?)
 
         # main layout
@@ -113,6 +125,19 @@ class TabPage(QWidget):
 
     def menu(self):
         print('tabs: menu')
+
+
+    def addTab(self):
+        # add new tab and select it
+        self.tabWidget.setCurrentIndex(self.tabWidget.addTab(TabPage(self.tabWidget), 'New Tab'))
+
+
+    def closeTab(self):
+        index = self.tabWidget.currentIndex()
+        # TODO: alert tab internal widget that it's about to close
+        self.tabWidget.removeTab(index)
+        if self.tabWidget.count() <= 0:
+            self.addTab()
 
 
     def navigate(self, url:str):

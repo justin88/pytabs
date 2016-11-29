@@ -1,7 +1,5 @@
 import sys
 
-from PyQt5.QtGui import QIcon
-
 from tabs import *
 
 class GuiMainWindow(QMainWindow):
@@ -12,20 +10,6 @@ class GuiMainWindow(QMainWindow):
         self.initUI()
 
 
-    def addTab(self):
-        # add new tab and select it
-        self.tabWidget.setCurrentIndex(self.tabWidget.addTab(TabPage(QTextEdit()), 'New Tab'))
-
-
-    def closeTab(self):
-        index = self.tabWidget.currentIndex()
-        widget = self.tabWidget.widget(index)
-        # TODO: alert tab internal widget that it's about to close
-        if widget is not None:
-            widget.deleteLater()
-        self.tabWidget.removeTab(index)
-
-
     def initUI(self):
         import config
         self.setWindowTitle(config.APPLICATION_NAME)
@@ -34,22 +18,8 @@ class GuiMainWindow(QMainWindow):
         # create menu
         bar = self.menuBar()
         fileMenu = bar.addMenu('&File')
-
-        addTabAction = QAction(QIcon('exit.png'), 'Add New &Tab', self) # TODO: fix icon
-        addTabAction.setShortcut('Ctrl+T')
-        addTabAction.triggered.connect(self.addTab)
-        fileMenu.addAction(addTabAction)
-
-        closeTabAction = QAction(QIcon('exit.png'), '&Close Tab', self) # TODO: fix icon
-        closeTabAction.setShortcut('Ctrl+W')
-        closeTabAction.triggered.connect(self.closeTab)
-        fileMenu.addAction(closeTabAction)
-
-        fileMenu.addSeparator()
-
-        exitAction = QAction(QIcon('exit.png'), 'E&xit', self) # TODO: fix icon
+        exitAction = QAction(QIcon('resources/exit.png'), 'E&xit', self)
         exitAction.setShortcut('Ctrl+Q')
-        exitAction.setStatusTip('Exit Application') # TODO: where is this rendered
         exitAction.triggered.connect(qApp.quit)
         fileMenu.addAction(exitAction)
 
@@ -72,11 +42,17 @@ class GuiMainWindow(QMainWindow):
 
         # add starter tab
         self.tabWidget.setMovable(True) # enable drag and drop
-        self.tabWidget.addTab(TabPage(QTextEdit()), 'New Tab')
+        self.tabWidget.setTabsClosable(True)
+        self.tabWidget.tabCloseRequested.connect(self.closeTab)
+        self.tabWidget.addTab(TabPage(self.tabWidget), 'New Tab')
 
         self.setWindowTitle(config.WINDOW_TITLE)
         self.setCentralWidget(self.tabWidget)
         self.resize(config.INITIAL_WINDOW_WIDTH, config.INITIAL_WINDOW_HEIGHT)
+
+
+    def closeTab(self, index):
+        self.tabWidget.widget(index).closeTab()
 
 
 def launch():
