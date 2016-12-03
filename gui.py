@@ -2,13 +2,13 @@ import sys
 
 from tabs import *
 
+
 class GuiMainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
         self.tabWidget = QTabWidget()
         self.initUI()
-
 
     def initUI(self):
         import config
@@ -38,10 +38,11 @@ class GuiMainWindow(QMainWindow):
         from apps.consoleApp import ConsoleApp
         apps.apps.registerApp(ConsoleApp())
         # import and register custom apps here
+        # from myApp import MyApp
         # apps.registerApp(MyApp())
 
         # add starter tab
-        self.tabWidget.setMovable(True) # enable drag and drop
+        self.tabWidget.setMovable(True)  # enable drag and drop
         self.tabWidget.setTabsClosable(True)
         self.tabWidget.tabCloseRequested.connect(self.closeTab)
         self.tabWidget.addTab(TabPage(self.tabWidget), 'New Tab')
@@ -49,7 +50,6 @@ class GuiMainWindow(QMainWindow):
         self.setWindowTitle(config.WINDOW_TITLE)
         self.setCentralWidget(self.tabWidget)
         self.resize(config.INITIAL_WINDOW_WIDTH, config.INITIAL_WINDOW_HEIGHT)
-
 
     def closeTab(self, index):
         self.tabWidget.widget(index).closeTab()

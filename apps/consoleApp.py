@@ -7,22 +7,20 @@ class ConsoleApp(AbstractApp):
     def __init__(self):
         super().__init__('console')
 
-
-    def getTabContentForUrl(self, url:str) -> AbstractTabContent:
+    def getTabContentForUrl(self, url: str) -> AbstractTabContent:
         print('ConsoleApp.getTabContentForUrl: {}'.format(url))
         return ConsoleTabContent(url)
 
 
 class ConsoleTabContent(AbstractTabContent):
 
-    def __init__(self, url:str):
+    def __init__(self, url: str):
         super().__init__(self)
         self.url = url
         self.kernelManager = None
         self.kernel = None
         self.kernelClient = None
         self.jupyterWidget = None
-
 
     def runInBackground(self):
         # from time import sleep; sleep(1.5); print('ConsoleTabContent.rIB: sleeping for testing reasons!')
@@ -34,7 +32,7 @@ class ConsoleTabContent(AbstractTabContent):
         self.kernelManager = QtInProcessKernelManager()
         self.kernelManager.start_kernel(show_banner=False)
         self.kernel = self.kernelManager.kernel
-        self.kernel.gui = 'qt4' # TODO: ???
+        self.kernel.gui = 'qt4'  # TODO: ???
         self.kernelClient = self.kernelManager.client()
         self.kernelClient.start_channels()
 
@@ -46,7 +44,7 @@ class ConsoleTabContent(AbstractTabContent):
         # self.jupyterWidget.syntax_style = 'monokai' # doesn't work -- foreground becomes invisible on Ubuntu
         self.jupyterWidget.execute('%matplotib inline')
         # more executes here to set up config
-        self.jupyterWidget.execute('') # TODO: why?
+        self.jupyterWidget.execute('')  # TODO: why?
 
         # layout
         from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QLabel, QWidget
@@ -60,4 +58,3 @@ class ConsoleTabContent(AbstractTabContent):
         widget = QWidget()
         widget.setLayout(hBox)
         return widget
-

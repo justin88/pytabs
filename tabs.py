@@ -8,6 +8,7 @@ import config
 HOME_URL = config.URL_SCHEME_WITH_SEPARATOR + 'home'
 DEFAULT_URL_FOR_NEW_TAB = HOME_URL
 
+
 class TabWorkerQThread(QtCore.QThread):
 
     connector = QtCore.pyqtSignal(object)
@@ -16,7 +17,6 @@ class TabWorkerQThread(QtCore.QThread):
         QtCore.QThread.__init__(self)
         self.tabContent = tabContent
 
-
     def run(self):
         self.tabContent.runInBackground()
         self.connector.emit('{} run'.format(self.tabContent.url))
@@ -24,14 +24,12 @@ class TabWorkerQThread(QtCore.QThread):
 
 class AbstractTabContent:
 
-    def __init__(self, url:str):
+    def __init__(self, url: str):
         self.url = url
-
 
     # Override this when subclassing
     def runInBackground(self):
         pass
-
 
     # Override this when subclassing
     def getContentWidget(self) -> QWidget:
@@ -40,7 +38,7 @@ class AbstractTabContent:
 
 class TabPage(QWidget):
 
-    def __init__(self, parentTabWidget:QTabWidget):
+    def __init__(self, parentTabWidget: QTabWidget):
         super().__init__()
 
         self.guiThread = QtCore.QThread.currentThread()
@@ -82,14 +80,13 @@ class TabPage(QWidget):
         self.closeTabAction.triggered.connect(self.closeTab)
         self.contextMenu.addAction(self.closeTabAction)
         self.contextMenu.addSeparator()
-        self.appsMenu = QMenu('Apps') # TODO: add apps...
-        from apps.apps import appsDict
 
+        self.appsMenu = QMenu('Apps')
+        from apps.apps import appsDict
         self.contextMenu.addMenu(self.appsMenu)
         for app in appsDict.keys():
             self.appsMenu.addMenu(appsDict[app].getMenu())
             print('Adding app {} {}'.format(app, len(self.appsMenu.actions())))
-
         self.menuButton.setMenu(self.contextMenu)
 
         # main layout
@@ -98,31 +95,26 @@ class TabPage(QWidget):
         self.hbox.setSpacing(4)
         self.vbox.setSpacing(4)
         self.progressBar = None
-        self.workerThread = None # needed to ensure WorkerThread is allocated on the heap and not garbage collected
+        self.workerThread = None  # needed to ensure WorkerThread is allocated on the heap and not garbage collected
 
         self.initUI()
         self.go()
-
 
     def back(self):
         self.historyForwardStack.append(self.currentUrl)
         self.navigate(self.historyBackStack.pop())
 
-
     def forward(self):
         self.historyBackStack.append(self.currentUrl)
         self.navigate(self.historyForwardStack.pop())
-
 
     def home(self):
         self.urlLineEdit.setText(HOME_URL)
         self.go()
 
-
     def refresh(self):
-        self.urlLineEdit.setText(self.currentUrl) # user may have edited the URL but not pushed Go; use original URL
+        self.urlLineEdit.setText(self.currentUrl)  # user may have edited the URL but not pushed Go; use original URL
         self.go()
-
 
     def go(self):
         url = self.urlLineEdit.text()
@@ -131,19 +123,12 @@ class TabPage(QWidget):
         self.historyForwardStack.clear()
         self.navigate(url)
 
-
     def preferences(self):
         print('tabs: preferences')
-
-
-    def menu(self):
-        print('tabs: menu')
-
 
     def addTab(self):
         # add new tab and select it
         self.tabWidget.setCurrentIndex(self.tabWidget.addTab(TabPage(self.tabWidget), 'New Tab'))
-
 
     def closeTab(self):
         index = self.tabWidget.currentIndex()
@@ -152,10 +137,9 @@ class TabPage(QWidget):
         if self.tabWidget.count() <= 0:
             self.addTab()
 
-
-    def navigate(self, url:str):
+    def navigate(self, url: str):
         progressBar = QProgressBar()
-        progressBar.setRange(0.0, 0.0) # indeterminate progress bar
+        progressBar.setRange(0.0, 0.0)  # indeterminate progress bar
         progressBar.setMaximumHeight(10.0)
         self.vbox.insertWidget(1, progressBar)
 
@@ -170,20 +154,18 @@ class TabPage(QWidget):
         self.workerThread.connector.connect(self.onBackgroundProcessingCompleted)
         self.workerThread.start()
 
-
     def onBackgroundProcessingCompleted(self):
         # remove progressBar
         for item in self.children():
             if item is None or not isinstance(item, QProgressBar):
                 continue
-            item.setParent(None) # removeWidget in layout does NOT work
+            item.setParent(None)  # removeWidget in layout does NOT work
 
         # replace content widget
         newWidget = self.tabContent.getContentWidget()
-        self.contentWidget.setParent(None) # this removes the old widget
+        self.contentWidget.setParent(None)  # this removes the old widget
         self.contentWidget = newWidget
         self.vbox.addWidget(self.contentWidget, stretch=1)
-
 
     def initUI(self):
         # set background color
@@ -202,7 +184,6 @@ class TabPage(QWidget):
         self.urlLineEdit.returnPressed.connect(self.go)
         self.goButton.clicked.connect(self.go)
         self.preferencesButton.clicked.connect(self.preferences)
-        self.menuButton.clicked.connect(self.menu)
 
         # layout widgets
         self.hbox.addWidget(self.backButton)
