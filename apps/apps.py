@@ -1,12 +1,13 @@
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction, QMenu, QWidget
 
-appsDict = { }
+appsDict = {}
 
-class AbstractApp():
 
-    def __init__(self, name:str):
-        self.name = name.lower() # enforce lowercase
+class AbstractApp:
+
+    def __init__(self, name: str):
+        self.name = name.lower()  # enforce lowercase
         self.icon = QIcon('resources/add.png')
 
         # app menu
@@ -16,33 +17,29 @@ class AbstractApp():
         self.showMenuAction.triggered.connect(self.showHome)
         self.menu.addAction(self.showMenuAction)
 
-
     # abstract method that should be overridden in implementing subclasses
-    def getTabContentForUrl(self, url:str): # -> AbstractTabContent implementation
+    def getTabContentForUrl(self, url: str):  # -> AbstractTabContent implementation
         return None
-
 
     def getMenu(self) -> QMenu:
         return self.menu
-
 
     def showHome(self):
         print('Load {} app here'.format(self.name))
 
 
-def registerApp(app:AbstractApp):
+def registerApp(app: AbstractApp):
     print('pytabs.apps.apps.registerApp: adding: {}'.format(app.name))
     appsDict[app.name] = app
 
 
-def getErrorTabContentForUrl(url:str, app:str):
-    from pytabs.tabs import AbstractTabContent
+def getErrorTabContentForUrl(url: str, app: str):
+    from tabs import AbstractTabContent
 
     class ErrorTabContent(AbstractTabContent):
 
-        def __init__(self, url:str):
-            super().__init__(url)
-
+        def __init__(self, urlWithError: str):
+            super().__init__(urlWithError)
 
         def getContentWidget(self) -> QWidget:
             from PyQt5.QtWidgets import QLabel
@@ -57,8 +54,3 @@ def getErrorTabContentForUrl(url:str, app:str):
             return label
 
     return ErrorTabContent(url)
-
-
-
-
-
