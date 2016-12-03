@@ -1,5 +1,5 @@
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import *
 
@@ -56,14 +56,22 @@ class TabPage(QWidget):
         # widgets for navigation bar
         import standards
         self.backButton = standards.fixButtonColor(QPushButton(QIcon('resources/back.png'), ''))
+        iconSize = QSize(20, 20)
+        self.backButton.setIconSize(iconSize)
         self.forwardButton = standards.fixButtonColor(QPushButton(QIcon('resources/forward.png'), ''))
+        self.forwardButton.setIconSize(iconSize)
         self.homeButton = standards.fixButtonColor(QPushButton(QIcon('resources/home.png'), ''))
+        self.homeButton.setIconSize(iconSize)
         self.refreshButton = standards.fixButtonColor(QPushButton(QIcon('resources/refresh.png'), ''))
+        self.refreshButton.setIconSize(iconSize)
         self.urlLineEdit = QLineEdit()
         self.goButton = standards.fixButtonColor(QPushButton(QIcon('resources/go.png'), ''))
+        self.goButton.setIconSize(iconSize)
         self.preferencesButton = standards.fixButtonColor(QPushButton(QIcon('resources/preferences.png'), ''))
-        # menu button
+        self.preferencesButton.setIconSize(iconSize)
         self.menuButton = QPushButton(QIcon('resources/menu.png'), '')
+        self.menuButton.setIconSize(iconSize)
+
         self.contextMenu = QMenu()
         self.addTabAction = QAction(QIcon('resources/add.png'), 'Add New &Tab', self)
         self.addTabAction.setShortcut('Ctrl+T')
@@ -75,9 +83,14 @@ class TabPage(QWidget):
         self.contextMenu.addAction(self.closeTabAction)
         self.contextMenu.addSeparator()
         self.appsMenu = QMenu('Apps') # TODO: add apps...
+        from apps.apps import appsDict
+
         self.contextMenu.addMenu(self.appsMenu)
+        for app in appsDict.keys():
+            self.appsMenu.addMenu(appsDict[app].getMenu())
+            print('Adding app {} {}'.format(app, len(self.appsMenu.actions())))
+
         self.menuButton.setMenu(self.contextMenu)
-        # TODO: icons instead of text; (make preference?)
 
         # main layout
         self.hbox = QHBoxLayout()
