@@ -1,6 +1,5 @@
-import sys
-
 from pytabs.tabs import *
+from pytabs.config import PyTabsConfiguration
 
 
 class PyTabsMainWindow(QMainWindow):
@@ -11,9 +10,8 @@ class PyTabsMainWindow(QMainWindow):
         self.initUI()
 
     def initUI(self):
-        from pytabs import config
-        self.setWindowTitle(config.APPLICATION_NAME)
-        self.setWindowIcon(QIcon(config.APPLICATION_ICON_PATH))
+        self.setWindowTitle(configuration.APPLICATION_NAME)
+        self.setWindowIcon(QIcon(configuration.APPLICATION_ICON_PATH))
 
         # create menu
         bar = self.menuBar()
@@ -37,16 +35,19 @@ class PyTabsMainWindow(QMainWindow):
 
         # set central widget, window title, and size on screen
         self.setCentralWidget(self.tabWidget)
-        self.setWindowTitle(config.WINDOW_TITLE)
-        self.resize(config.INITIAL_WINDOW_WIDTH, config.INITIAL_WINDOW_HEIGHT)
+        self.setWindowTitle(configuration.WINDOW_TITLE)
+        self.resize(configuration.INITIAL_WINDOW_WIDTH, configuration.INITIAL_WINDOW_HEIGHT)
 
 
-def launch(listOfAppClasses):  # list of AbstractApp implementations
+def launch():
+    import sys
     app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon(configuration.APPLICATION_ICON_PATH))
     guiMainWindow = PyTabsMainWindow()
+    guiMainWindow.setWindowTitle(configuration.WINDOW_TITLE)
 
     # load external apps
-    for appClass in listOfAppClasses:
+    for appClass in configuration.getApps():
         from pytabs.apps.apps import registerApp
         registerApp(appClass(guiMainWindow))
 
@@ -63,5 +64,8 @@ def launch(listOfAppClasses):  # list of AbstractApp implementations
     sys.exit(app.exec_())
 
 
+configuration = PyTabsConfiguration()
+
+
 if __name__ == '__main__':
-    launch([])
+    launch()
