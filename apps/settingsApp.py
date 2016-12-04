@@ -1,5 +1,5 @@
-from apps.apps import AbstractApp
-from tabs import AbstractTabContent
+from pytabs.apps.apps import AbstractApp
+from pytabs.tabs import AbstractTabContent
 
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow
@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QMainWindow
 class SettingsApp(AbstractApp):
 
     def __init__(self, mainWindow: QMainWindow):
-        super().__init__("Settings", QIcon('resources/preferences.png'), mainWindow)
+        super().__init__("Settings", QIcon('pytabs/resources/preferences.png'), mainWindow)
 
     def getTabContentForUrl(self, url: str) -> AbstractTabContent:
         return SettingsTabContent(url)

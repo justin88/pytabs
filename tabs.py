@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import *
 
-import config
+from pytabs import config
 
 HOME_URL = config.URL_SCHEME_WITH_SEPARATOR + 'home'
 SETTINGS_URL = config.URL_SCHEME_WITH_SEPARATOR + 'settings'
@@ -65,7 +65,7 @@ class PyTabsTabWidget(QTabWidget):
             self.addNewTab()
 
     def addNewTab(self):
-        import urls
+        from pytabs import urls
         self.addTabWithUrl(urls.baseUrlForApp('home'))
 
     def addTabWithUrl(self, url: str):
@@ -89,34 +89,34 @@ class PyTabsPage(QWidget):
         self.historyForwardStack = []
 
         # widgets for navigation bar
-        import standards
-        self.backButton = standards.fixButtonColor(QPushButton(QIcon('resources/back.png'), ''))
+        from pytabs import standards
+        self.backButton = standards.fixButtonColor(QPushButton(QIcon('pytabs/resources/back.png'), ''))
         iconSize = QSize(20, 20)
         self.backButton.setIconSize(iconSize)
-        self.forwardButton = standards.fixButtonColor(QPushButton(QIcon('resources/forward.png'), ''))
+        self.forwardButton = standards.fixButtonColor(QPushButton(QIcon('pytabs/resources/forward.png'), ''))
         self.forwardButton.setIconSize(iconSize)
-        self.homeButton = standards.fixButtonColor(QPushButton(QIcon('resources/home.png'), ''))
+        self.homeButton = standards.fixButtonColor(QPushButton(QIcon('pytabs/resources/home.png'), ''))
         self.homeButton.setIconSize(iconSize)
-        self.refreshButton = standards.fixButtonColor(QPushButton(QIcon('resources/refresh.png'), ''))
+        self.refreshButton = standards.fixButtonColor(QPushButton(QIcon('pytabs/resources/refresh.png'), ''))
         self.refreshButton.setIconSize(iconSize)
         self.urlLineEdit = QLineEdit(url)
-        self.goButton = standards.fixButtonColor(QPushButton(QIcon('resources/go.png'), ''))
+        self.goButton = standards.fixButtonColor(QPushButton(QIcon('pytabs/resources/go.png'), ''))
         self.goButton.setIconSize(iconSize)
-        self.menuButton = QPushButton(QIcon('resources/menu.png'), '')
+        self.menuButton = QPushButton(QIcon('pytabs/resources/menu.png'), '')
         self.menuButton.setIconSize(iconSize)
 
         self.contextMenu = QMenu()
-        self.addTabAction = QAction(QIcon('resources/add.png'), 'Add New &Tab', self)
+        self.addTabAction = QAction(QIcon('pytabs/resources/add.png'), 'Add New &Tab', self)
         self.addTabAction.setShortcut('Ctrl+T')
         self.addTabAction.triggered.connect(self.tabWidget.addNewTab)
         self.contextMenu.addAction(self.addTabAction)
-        self.closeTabAction = QAction(QIcon('resources/exit.png'), '&Close Tab', self)
+        self.closeTabAction = QAction(QIcon('pytabs/resources/exit.png'), '&Close Tab', self)
         self.closeTabAction.setShortcut('Ctrl+W')
         self.closeTabAction.triggered.connect(self.tabWidget.closeTab)
         self.contextMenu.addAction(self.closeTabAction)
         self.contextMenu.addSeparator()
 
-        from apps.apps import appsDict
+        from pytabs.apps.apps import appsDict
         for app in appsDict.keys():
             self.contextMenu.addMenu(appsDict[app].getMenu())
         self.menuButton.setMenu(self.contextMenu)
@@ -166,7 +166,7 @@ class PyTabsPage(QWidget):
         self.backButton.setEnabled(len(self.historyBackStack) > 0)
         self.forwardButton.setEnabled(len(self.historyForwardStack) > 0)
 
-        import urls
+        from pytabs import urls
         self.tabContent = urls.getTabContentForUrl(url)
         self.workerThread = TabWorkerQThread(self.tabContent)
         self.workerThread.connector.connect(self.onBackgroundProcessingCompleted)

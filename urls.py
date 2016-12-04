@@ -1,4 +1,4 @@
-from apps import apps
+from pytabs.apps import apps
 
 from urllib.parse import urlparse
 
@@ -13,5 +13,5 @@ def getTabContentForUrl(url: str):  # -> AbstractTabContent
 
 
 def baseUrlForApp(appName: str):
-    import config
+    from pytabs import config
     return config.URL_SCHEME_WITH_SEPARATOR + appName
