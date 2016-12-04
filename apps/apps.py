@@ -11,7 +11,7 @@ class AbstractApp:
         self.canonicalName = name.lower()
         self.mainWindow = mainWindow
         if icon is None:
-            self.icon = QIcon('resources/add.png')
+            self.icon = QIcon('pytabs/resources/add.png')
         else:
             self.icon = icon
 
@@ -30,7 +30,7 @@ class AbstractApp:
         return self.menu
 
     def showApp(self):
-        import urls
+        from pytabs import urls
         self.mainWindow.tabWidget.addTabWithUrl(urls.baseUrlForApp(self.canonicalName))
 
 
@@ -39,7 +39,7 @@ def registerApp(app: AbstractApp):
 
 
 def getErrorTabContentForUrl(url: str, app: str):
-    from tabs import AbstractTabContent
+    from pytabs.tabs import AbstractTabContent
 
     class ErrorTabContent(AbstractTabContent):
 

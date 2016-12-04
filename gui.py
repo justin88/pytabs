@@ -1,6 +1,6 @@
 import sys
 
-from tabs import *
+from pytabs.tabs import *
 
 
 class PyTabsMainWindow(QMainWindow):
@@ -11,32 +11,29 @@ class PyTabsMainWindow(QMainWindow):
         self.initUI()
 
     def initUI(self):
-        import config
+        from pytabs import config
         self.setWindowTitle(config.APPLICATION_NAME)
         self.setWindowIcon(QIcon(config.APPLICATION_ICON_PATH))
 
         # create menu
         bar = self.menuBar()
         fileMenu = bar.addMenu('&File')
-        exitAction = QAction(QIcon('resources/exit.png'), 'E&xit', self)
+        exitAction = QAction(QIcon('pytabs/resources/exit.png'), 'E&xit', self)
         exitAction.setShortcut('Ctrl+Q')
         exitAction.triggered.connect(qApp.quit)
         fileMenu.addAction(exitAction)
 
         # initialize apps
-        import apps
-        from apps.homeApp import HomeApp
+        from pytabs import apps
+        from pytabs.apps.homeApp import HomeApp
         apps.apps.registerApp(HomeApp(self))
-        from apps.consoleApp import ConsoleApp
+        from pytabs.apps.consoleApp import ConsoleApp
         apps.apps.registerApp(ConsoleApp(self))
-        from apps.settingsApp import SettingsApp
+        from pytabs.apps.settingsApp import SettingsApp
         apps.apps.registerApp(SettingsApp(self))
         # import and register custom apps here
-        # from myApp import MyApp
+        # from pytabs.myApp import MyApp
         # apps.registerApp(MyApp())
-
-        # add starter tab
-        self.tabWidget.addNewTab()
 
         # set central widget, window title, and size on screen
         self.setCentralWidget(self.tabWidget)
@@ -44,10 +41,22 @@ class PyTabsMainWindow(QMainWindow):
         self.resize(config.INITIAL_WINDOW_WIDTH, config.INITIAL_WINDOW_HEIGHT)
 
 
-def launch():
+def launch(listOfAppClasses):  # list of AbstractApp implementations
     app = QApplication(sys.argv)
     guiMainWindow = PyTabsMainWindow()
-    import standards
+
+    # load external apps
+    for appClass in listOfAppClasses:
+        from pytabs.apps.apps import registerApp
+        registerApp(appClass(guiMainWindow))
+
+    # load external config # TODO
+
+    # add starter tab
+    guiMainWindow.tabWidget.addNewTab()
+
+    # center the window
+    from pytabs import standards
     standards.centerWidgetOnScreen(guiMainWindow)
     guiMainWindow.show()
 
@@ -55,4 +64,4 @@ def launch():
 
 
 if __name__ == '__main__':
-    launch()
+    launch([])
