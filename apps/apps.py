@@ -6,10 +6,14 @@ appsDict = {}
 
 class AbstractApp:
 
-    def __init__(self, name: str, mainWindow: QMainWindow):
-        self.name = name.lower()  # enforce lowercase
+    def __init__(self, name: str, icon: QIcon, mainWindow: QMainWindow):
+        self.name = name
+        self.canonicalName = name.lower()
         self.mainWindow = mainWindow
-        self.icon = QIcon('resources/add.png')
+        if icon is None:
+            self.icon = QIcon('resources/add.png')
+        else:
+            self.icon = icon
 
         # app menu
         self.menu = QMenu(self.name)
@@ -27,11 +31,11 @@ class AbstractApp:
 
     def showApp(self):
         import urls
-        self.mainWindow.tabWidget.addTabWithUrl(urls.baseUrlForApp(self.name))
+        self.mainWindow.tabWidget.addTabWithUrl(urls.baseUrlForApp(self.canonicalName))
 
 
 def registerApp(app: AbstractApp):
-    appsDict[app.name] = app
+    appsDict[app.canonicalName] = app
 
 
 def getErrorTabContentForUrl(url: str, app: str):

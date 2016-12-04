@@ -1,13 +1,14 @@
 from apps.apps import AbstractApp
 from tabs import AbstractTabContent
 
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow
 
 
 class ConsoleApp(AbstractApp):
 
     def __init__(self, mainWindow: QMainWindow):
-        super().__init__('console', mainWindow)
+        super().__init__('Console', QIcon('resources/console.png'), mainWindow)
 
     def getTabContentForUrl(self, url: str) -> AbstractTabContent:
         print('ConsoleApp.getTabContentForUrl: {}'.format(url))
