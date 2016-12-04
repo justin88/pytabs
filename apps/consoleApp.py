@@ -18,6 +18,7 @@ class ConsoleTabContent(AbstractTabContent):
 
     def __init__(self, url: str):
         super().__init__(self)
+        self.title = 'Console'
         self.url = url
         self.kernelManager = None
         self.kernel = None

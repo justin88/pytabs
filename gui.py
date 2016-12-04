@@ -34,7 +34,7 @@ class PyTabsMainWindow(QMainWindow):
         # apps.registerApp(MyApp())
 
         # add starter tab
-        self.tabWidget.addTab(PyTabsPage(self.tabWidget), 'New Tab')
+        self.tabWidget.addNewTab()
 
         # set central widget, window title, and size on screen
         self.setCentralWidget(self.tabWidget)

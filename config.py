@@ -1,6 +1,6 @@
 # TODO: add configuration parameters here
 
-URL_SCHEME = 'url'
+URL_SCHEME = 'pytabs'
 URL_SCHEME_WITH_SEPARATOR = URL_SCHEME + '://'
 
 WINDOW_TITLE = 'My GUI'
