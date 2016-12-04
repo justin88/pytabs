@@ -26,6 +26,7 @@ class AbstractTabContent:
 
     def __init__(self, url: str):
         self.url = url
+        self.title = "New Tab"
 
     # Override this when subclassing
     def runInBackground(self):
@@ -35,10 +36,45 @@ class AbstractTabContent:
     def getContentWidget(self) -> QWidget:
         return QTextEdit()
 
+    def getTitle(self):
+        return self.title
+
+
+class PyTabsTabWidget(QTabWidget):
+
+    def __init__(self):
+        super().__init__()
+
+        # set background color
+        palette = self.palette()
+        from PyQt5.QtGui import QColor, QPalette
+        palette.setColor(QPalette.Window, Qt.darkGray)
+        palette.setColor(QPalette.Button, QColor(184, 184, 184)) # this sets the foreground of the tab in the TabBar
+        self.setAutoFillBackground(True)
+        self.setPalette(palette)
+
+        # quality of life improvements for tabs
+        self.setMovable(True)  # enable drag and drop
+        self.setTabsClosable(True)  # add x to tab
+        self.tabCloseRequested.connect(self.closeTab)
+
+    def closeTab(self, index):
+        self.removeTab(index)
+        if self.count() < 1:
+            self.addNewTab()
+
+    def addNewTab(self):
+        import urls
+        self.addTabWithUrl(urls.baseUrlForApp('home'))
+
+    def addTabWithUrl(self, url: str):
+        page = PyTabsPage(self, url)
+        self.setCurrentIndex(self.addTab(page, page.tabContent.getTitle()))
+
 
 class PyTabsPage(QWidget):
 
-    def __init__(self, parentTabWidget: PyTabsTabWidget):
+    def __init__(self, parentTabWidget: PyTabsTabWidget, url: str = None):
         super().__init__()
 
         self.guiThread = QtCore.QThread.currentThread()
@@ -47,7 +83,7 @@ class PyTabsPage(QWidget):
         self.contentWidget = QTextEdit()
 
         # back/forward navigation state
-        self.currentUrl = None
+        self.currentUrl = url
         self.historyBackStack = []
         self.historyForwardStack = []
 
@@ -62,7 +98,7 @@ class PyTabsPage(QWidget):
         self.homeButton.setIconSize(iconSize)
         self.refreshButton = standards.fixButtonColor(QPushButton(QIcon('resources/refresh.png'), ''))
         self.refreshButton.setIconSize(iconSize)
-        self.urlLineEdit = QLineEdit()
+        self.urlLineEdit = QLineEdit(url)
         self.goButton = standards.fixButtonColor(QPushButton(QIcon('resources/go.png'), ''))
         self.goButton.setIconSize(iconSize)
         self.preferencesButton = standards.fixButtonColor(QPushButton(QIcon('resources/preferences.png'), ''))
@@ -73,11 +109,11 @@ class PyTabsPage(QWidget):
         self.contextMenu = QMenu()
         self.addTabAction = QAction(QIcon('resources/add.png'), 'Add New &Tab', self)
         self.addTabAction.setShortcut('Ctrl+T')
-        self.addTabAction.triggered.connect(self.addTab)
+        self.addTabAction.triggered.connect(self.tabWidget.addNewTab)
         self.contextMenu.addAction(self.addTabAction)
         self.closeTabAction = QAction(QIcon('resources/exit.png'), '&Close Tab', self)
         self.closeTabAction.setShortcut('Ctrl+W')
-        self.closeTabAction.triggered.connect(self.closeTab)
+        self.closeTabAction.triggered.connect(self.tabWidget.closeTab)
         self.contextMenu.addAction(self.closeTabAction)
         self.contextMenu.addSeparator()
 
@@ -125,17 +161,6 @@ class PyTabsPage(QWidget):
     def preferences(self):
         print('tabs: preferences')
 
-    def addTab(self):
-        # add new tab and select it
-        self.tabWidget.setCurrentIndex(self.tabWidget.addTab(PyTabsPage(self.tabWidget), 'New Tab'))
-
-    def closeTab(self):
-        index = self.tabWidget.currentIndex()
-        # TODO: alert tab internal widget that it's about to close
-        self.tabWidget.removeTab(index)
-        if self.tabWidget.count() <= 0:
-            self.addTab()
-
     def navigate(self, url: str):
         progressBar = QProgressBar()
         progressBar.setRange(0.0, 0.0)  # indeterminate progress bar
@@ -178,7 +203,6 @@ class PyTabsPage(QWidget):
         self.forwardButton.clicked.connect(self.forward)
         self.homeButton.clicked.connect(self.home)
         self.refreshButton.clicked.connect(self.refresh)
-        self.urlLineEdit.setText(DEFAULT_URL_FOR_NEW_TAB)
         # self.urlLineEdit.setFont() # TODO: set fixed width font
         self.urlLineEdit.returnPressed.connect(self.go)
         self.goButton.clicked.connect(self.go)
@@ -196,26 +220,3 @@ class PyTabsPage(QWidget):
         self.vbox.addLayout(self.hbox)
         self.vbox.addWidget(self.contentWidget, stretch=1)
         self.setLayout(self.vbox)
-
-
-class PyTabsTabWidget(QTabWidget):
-
-    def __init__(self):
-        super().__init__()
-
-        # set background color
-        palette = self.palette()
-        from PyQt5.QtGui import QColor, QPalette
-        palette.setColor(QPalette.Window, Qt.darkGray)
-        palette.setColor(QPalette.Button, QColor(184, 184, 184)) # this sets the foreground of the tab in the TabBar
-        self.setAutoFillBackground(True)
-        self.setPalette(palette)
-
-        # quality of life improvements for tabs
-        self.setMovable(True)  # enable drag and drop
-        self.setTabsClosable(True)  # add x to tab
-        self.tabCloseRequested.connect(self.closeTab)
-
-    def closeTab(self, index):
-        self.widget(index).closeTab()
-

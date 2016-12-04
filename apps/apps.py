@@ -26,8 +26,8 @@ class AbstractApp:
         return self.menu
 
     def showApp(self):
-        from PyQt5.QtWidgets import QLabel
-        self.mainWindow.tabWidget.addTab(QLabel('HI'), 'hi')
+        import urls
+        self.mainWindow.tabWidget.addTabWithUrl(urls.baseUrlForApp(self.name))
 
 
 def registerApp(app: AbstractApp):

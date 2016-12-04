@@ -10,3 +10,8 @@ def getTabContentForUrl(url: str):  # -> AbstractTabContent
         return apps.appsDict[app].getTabContentForUrl(url=url)
     else:
         return apps.getErrorTabContentForUrl(url=url, app=app)
+
+
+def baseUrlForApp(appName: str):
+    import config
+    return config.URL_SCHEME_WITH_SEPARATOR + appName
