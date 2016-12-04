@@ -1,11 +1,13 @@
 from apps.apps import AbstractApp
 from tabs import AbstractTabContent
 
+from PyQt5.QtWidgets import QMainWindow
+
 
 class ConsoleApp(AbstractApp):
 
-    def __init__(self):
-        super().__init__('console')
+    def __init__(self, mainWindow: QMainWindow):
+        super().__init__('console', mainWindow)
 
     def getTabContentForUrl(self, url: str) -> AbstractTabContent:
         print('ConsoleApp.getTabContentForUrl: {}'.format(url))

@@ -36,9 +36,9 @@ class AbstractTabContent:
         return QTextEdit()
 
 
-class TabPage(QWidget):
+class PyTabsPage(QWidget):
 
-    def __init__(self, parentTabWidget: QTabWidget):
+    def __init__(self, parentTabWidget: PyTabsTabWidget):
         super().__init__()
 
         self.guiThread = QtCore.QThread.currentThread()
@@ -86,7 +86,6 @@ class TabPage(QWidget):
         self.contextMenu.addMenu(self.appsMenu)
         for app in appsDict.keys():
             self.appsMenu.addMenu(appsDict[app].getMenu())
-            print('Adding app {} {}'.format(app, len(self.appsMenu.actions())))
         self.menuButton.setMenu(self.contextMenu)
 
         # main layout
@@ -128,7 +127,7 @@ class TabPage(QWidget):
 
     def addTab(self):
         # add new tab and select it
-        self.tabWidget.setCurrentIndex(self.tabWidget.addTab(TabPage(self.tabWidget), 'New Tab'))
+        self.tabWidget.setCurrentIndex(self.tabWidget.addTab(PyTabsPage(self.tabWidget), 'New Tab'))
 
     def closeTab(self):
         index = self.tabWidget.currentIndex()
@@ -197,3 +196,26 @@ class TabPage(QWidget):
         self.vbox.addLayout(self.hbox)
         self.vbox.addWidget(self.contentWidget, stretch=1)
         self.setLayout(self.vbox)
+
+
+class PyTabsTabWidget(QTabWidget):
+
+    def __init__(self):
+        super().__init__()
+
+        # set background color
+        palette = self.palette()
+        from PyQt5.QtGui import QColor, QPalette
+        palette.setColor(QPalette.Window, Qt.darkGray)
+        palette.setColor(QPalette.Button, QColor(184, 184, 184)) # this sets the foreground of the tab in the TabBar
+        self.setAutoFillBackground(True)
+        self.setPalette(palette)
+
+        # quality of life improvements for tabs
+        self.setMovable(True)  # enable drag and drop
+        self.setTabsClosable(True)  # add x to tab
+        self.tabCloseRequested.connect(self.closeTab)
+
+    def closeTab(self, index):
+        self.widget(index).closeTab()
+
