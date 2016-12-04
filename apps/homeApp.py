@@ -1,11 +1,13 @@
 from apps.apps import AbstractApp
 from tabs import AbstractTabContent
 
+from PyQt5.QtWidgets import QMainWindow
+
 
 class HomeApp(AbstractApp):
 
-    def __init__(self):
-        super().__init__("home")
+    def __init__(self, mainWindow: QMainWindow):
+        super().__init__("home", mainWindow)
 
     def getTabContentForUrl(self, url: str) -> AbstractTabContent:
         print('HomeApp.getTabContentForUrl: {}'.format(url))

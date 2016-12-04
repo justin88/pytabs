@@ -1,20 +1,21 @@
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QAction, QMenu, QWidget
+from PyQt5.QtWidgets import QAction, QMainWindow, QMenu, QWidget
 
 appsDict = {}
 
 
 class AbstractApp:
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, mainWindow: QMainWindow):
         self.name = name.lower()  # enforce lowercase
+        self.mainWindow = mainWindow
         self.icon = QIcon('resources/add.png')
 
         # app menu
         self.menu = QMenu(self.name)
-        self.showMenuAction = QAction(self.icon, 'Show {} &Home'.format(self.name), self.menu)
+        self.showMenuAction = QAction(self.icon, 'Show {}'.format(self.name), self.menu)
         self.showMenuAction.setShortcut('Ctrl+H')
-        self.showMenuAction.triggered.connect(self.showHome)
+        self.showMenuAction.triggered.connect(self.showApp)
         self.menu.addAction(self.showMenuAction)
 
     # abstract method that should be overridden in implementing subclasses
@@ -24,12 +25,12 @@ class AbstractApp:
     def getMenu(self) -> QMenu:
         return self.menu
 
-    def showHome(self):
-        print('Load {} app here'.format(self.name))
+    def showApp(self):
+        from PyQt5.QtWidgets import QLabel
+        self.mainWindow.tabWidget.addTab(QLabel('HI'), 'hi')
 
 
 def registerApp(app: AbstractApp):
-    print('pytabs.apps.apps.registerApp: adding: {}'.format(app.name))
     appsDict[app.name] = app
 
 

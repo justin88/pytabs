@@ -3,11 +3,11 @@ import sys
 from tabs import *
 
 
-class GuiMainWindow(QMainWindow):
+class PyTabsMainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.tabWidget = QTabWidget()
+        self.tabWidget = PyTabsTabWidget()
         self.initUI()
 
     def initUI(self):
@@ -23,42 +23,28 @@ class GuiMainWindow(QMainWindow):
         exitAction.triggered.connect(qApp.quit)
         fileMenu.addAction(exitAction)
 
-        # set background color
-        palette = self.tabWidget.palette()
-        from PyQt5.QtGui import QColor, QPalette
-        palette.setColor(QPalette.Window, Qt.darkGray)
-        palette.setColor(QPalette.Button, QColor(184, 184, 184)) # this sets the foreground of the tab in the TabBar
-        self.tabWidget.setAutoFillBackground(True)
-        self.tabWidget.setPalette(palette)
-
         # initialize apps
         import apps
         from apps.homeApp import HomeApp
-        apps.apps.registerApp(HomeApp())
+        apps.apps.registerApp(HomeApp(self))
         from apps.consoleApp import ConsoleApp
-        apps.apps.registerApp(ConsoleApp())
+        apps.apps.registerApp(ConsoleApp(self))
         # import and register custom apps here
         # from myApp import MyApp
         # apps.registerApp(MyApp())
 
         # add starter tab
-        self.tabWidget.setMovable(True)  # enable drag and drop
-        self.tabWidget.setTabsClosable(True)
-        self.tabWidget.tabCloseRequested.connect(self.closeTab)
-        self.tabWidget.addTab(TabPage(self.tabWidget), 'New Tab')
+        self.tabWidget.addTab(PyTabsPage(self.tabWidget), 'New Tab')
 
-        self.setWindowTitle(config.WINDOW_TITLE)
+        # set central widget, window title, and size on screen
         self.setCentralWidget(self.tabWidget)
+        self.setWindowTitle(config.WINDOW_TITLE)
         self.resize(config.INITIAL_WINDOW_WIDTH, config.INITIAL_WINDOW_HEIGHT)
-
-    def closeTab(self, index):
-        self.tabWidget.widget(index).closeTab()
 
 
 def launch():
     app = QApplication(sys.argv)
-
-    guiMainWindow = GuiMainWindow()
+    guiMainWindow = PyTabsMainWindow()
     import standards
     standards.centerWidgetOnScreen(guiMainWindow)
     guiMainWindow.show()
