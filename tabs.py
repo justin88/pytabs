@@ -3,12 +3,6 @@ from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import *
 
-from pytabs import config
-
-HOME_URL = config.URL_SCHEME_WITH_SEPARATOR + 'home'
-SETTINGS_URL = config.URL_SCHEME_WITH_SEPARATOR + 'settings'
-DEFAULT_URL_FOR_NEW_TAB = HOME_URL
-
 
 class TabWorkerQThread(QtCore.QThread):
 
@@ -80,7 +74,8 @@ class PyTabsPage(QWidget):
 
         self.guiThread = QtCore.QThread.currentThread()
         self.tabWidget = parentTabWidget
-        self.tabContent = AbstractTabContent(DEFAULT_URL_FOR_NEW_TAB)
+        # from pytabs.gui import configuration
+        self.tabContent = AbstractTabContent('')  # configuration.DEFAULT_URL_FOR_NEW_TAB
         self.contentWidget = QTextEdit()
 
         # back/forward navigation state
@@ -141,7 +136,8 @@ class PyTabsPage(QWidget):
         self.navigate(self.historyForwardStack.pop())
 
     def home(self):
-        self.urlLineEdit.setText(HOME_URL)
+        from pytabs import gui
+        self.urlLineEdit.setText(gui.configuration.URL_SCHEME_WITH_SEPARATOR + 'home')
         self.go()
 
     def refresh(self):

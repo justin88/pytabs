@@ -13,5 +13,5 @@ def getTabContentForUrl(url: str):  # -> AbstractTabContent
 
 
 def baseUrlForApp(appName: str):
-    from pytabs import config
-    return config.URL_SCHEME_WITH_SEPARATOR + appName
+    from pytabs.gui import configuration
+    return configuration.URL_SCHEME_WITH_SEPARATOR + appName
