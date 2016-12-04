@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import *
 import config
 
 HOME_URL = config.URL_SCHEME_WITH_SEPARATOR + 'home'
+SETTINGS_URL = config.URL_SCHEME_WITH_SEPARATOR + 'settings'
 DEFAULT_URL_FOR_NEW_TAB = HOME_URL
 
 
@@ -101,8 +102,6 @@ class PyTabsPage(QWidget):
         self.urlLineEdit = QLineEdit(url)
         self.goButton = standards.fixButtonColor(QPushButton(QIcon('resources/go.png'), ''))
         self.goButton.setIconSize(iconSize)
-        self.preferencesButton = standards.fixButtonColor(QPushButton(QIcon('resources/preferences.png'), ''))
-        self.preferencesButton.setIconSize(iconSize)
         self.menuButton = QPushButton(QIcon('resources/menu.png'), '')
         self.menuButton.setIconSize(iconSize)
 
@@ -117,11 +116,9 @@ class PyTabsPage(QWidget):
         self.contextMenu.addAction(self.closeTabAction)
         self.contextMenu.addSeparator()
 
-        self.appsMenu = QMenu('Apps')
         from apps.apps import appsDict
-        self.contextMenu.addMenu(self.appsMenu)
         for app in appsDict.keys():
-            self.appsMenu.addMenu(appsDict[app].getMenu())
+            self.contextMenu.addMenu(appsDict[app].getMenu())
         self.menuButton.setMenu(self.contextMenu)
 
         # main layout
@@ -157,9 +154,6 @@ class PyTabsPage(QWidget):
             self.historyBackStack.append(self.currentUrl)
         self.historyForwardStack.clear()
         self.navigate(url)
-
-    def preferences(self):
-        print('tabs: preferences')
 
     def navigate(self, url: str):
         progressBar = QProgressBar()
@@ -206,7 +200,6 @@ class PyTabsPage(QWidget):
         # self.urlLineEdit.setFont() # TODO: set fixed width font
         self.urlLineEdit.returnPressed.connect(self.go)
         self.goButton.clicked.connect(self.go)
-        self.preferencesButton.clicked.connect(self.preferences)
 
         # layout widgets
         self.hbox.addWidget(self.backButton)
@@ -215,7 +208,6 @@ class PyTabsPage(QWidget):
         self.hbox.addWidget(self.refreshButton)
         self.hbox.addWidget(self.urlLineEdit, stretch=1)
         self.hbox.addWidget(self.goButton)
-        self.hbox.addWidget(self.preferencesButton)
         self.hbox.addWidget(self.menuButton)
         self.vbox.addLayout(self.hbox)
         self.vbox.addWidget(self.contentWidget, stretch=1)

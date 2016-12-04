@@ -29,6 +29,8 @@ class PyTabsMainWindow(QMainWindow):
         apps.apps.registerApp(HomeApp(self))
         from apps.consoleApp import ConsoleApp
         apps.apps.registerApp(ConsoleApp(self))
+        from apps.settingsApp import SettingsApp
+        apps.apps.registerApp(SettingsApp(self))
         # import and register custom apps here
         # from myApp import MyApp
         # apps.registerApp(MyApp())

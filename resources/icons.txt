@@ -11,3 +11,4 @@ preferences -- 1480331953_icons_settings.png
 exit -- 1480331964_icons_exit
 add -- 1480331795_add
 forward -- back (flipped <->)
+console -- 1480839111_f-command_256
