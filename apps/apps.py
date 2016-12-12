@@ -17,10 +17,10 @@ class AbstractApp:
 
         # app menu
         self.menu = QMenu(self.name)
-        self.showMenuAction = QAction(self.icon, 'Show {}'.format(self.name), self.menu)
-        self.showMenuAction.setShortcut('Ctrl+H')
-        self.showMenuAction.triggered.connect(self.showApp)
-        self.menu.addAction(self.showMenuAction)
+        self.menuAction = QAction(self.icon, '{}'.format(self.name), self.menu)
+        self.menuAction.setShortcut('Ctrl+H')
+        self.menuAction.triggered.connect(self.showApp)
+        self.menu.addAction(self.menuAction)
 
     # abstract method that should be overridden in implementing subclasses
     def getTabContentForUrl(self, url: str):  # -> AbstractTabContent implementation
@@ -36,6 +36,15 @@ class AbstractApp:
 
 def registerApp(app: AbstractApp):
     appsDict[app.canonicalName] = app
+
+
+def deregisterApp(app: AbstractApp):
+    if app is None:
+        return
+    elif isinstance(app, str):
+        del appsDict[app]
+    if isinstance(app, AbstractApp):
+        del appsDict[app.canonicalName]
 
 
 def getErrorTabContentForUrl(url: str, app: str):

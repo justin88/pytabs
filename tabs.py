@@ -112,8 +112,13 @@ class PyTabsPage(QWidget):
         self.contextMenu.addSeparator()
 
         from pytabs.apps.apps import appsDict
+        systemAppList = ['console', 'home', 'settings']
         for app in appsDict.keys():
-            self.contextMenu.addMenu(appsDict[app].getMenu())
+            if app not in systemAppList:
+                self.contextMenu.addMenu(appsDict[app].getMenu())
+        self.contextMenu.addSeparator()
+        for app in systemAppList:
+            self.contextMenu.addAction(appsDict[app].menuAction)
         self.menuButton.setMenu(self.contextMenu)
 
         # main layout
