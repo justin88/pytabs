@@ -43,23 +43,23 @@ def launch():
     import sys
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon(configuration.APPLICATION_ICON_PATH))
-    guiMainWindow = PyTabsMainWindow()
-    guiMainWindow.setWindowTitle(configuration.WINDOW_TITLE)
+    pyTabsMainWindow = PyTabsMainWindow()
+    pyTabsMainWindow.setWindowTitle(configuration.WINDOW_TITLE)
 
     # load external apps
     for appClass in configuration.getApps():
         from pytabs.apps.apps import registerApp
-        registerApp(appClass(guiMainWindow))
+        registerApp(appClass(pyTabsMainWindow))
 
     # load external config # TODO
 
     # add starter tab
-    guiMainWindow.tabWidget.addNewTab()
+    pyTabsMainWindow.tabWidget.addNewTab()
 
     # center the window
     from pytabs import standards
-    standards.centerWidgetOnScreen(guiMainWindow)
-    guiMainWindow.show()
+    standards.centerWidgetOnScreen(pyTabsMainWindow)
+    pyTabsMainWindow.show()
 
     sys.exit(app.exec_())
 

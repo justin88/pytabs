@@ -17,6 +17,7 @@ class AbstractApp:
 
         # app menu
         self.menu = QMenu(self.name)
+        self.menu.setIcon(self.icon)
         self.menuAction = QAction(self.icon, '{}'.format(self.name), self.menu)
         self.menuAction.setShortcut('Ctrl+H')
         self.menuAction.triggered.connect(self.showApp)
